@@ -11,4 +11,4 @@ experience bar and nothing is repaired.
 
 This mod fixes this behavior by only selecting items which need to be repaired.
 
-This mod requires Forge. It was tested with build #2623.
+This mod requires Forge. It was tested with build #2623 for 1.12.2.
