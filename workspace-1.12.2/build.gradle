@@ -1,0 +1,81 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven { url = "http://files.minecraftforge.net/maven" }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
+    }
+}
+
+plugins {
+    id "io.franzbecker.gradle-lombok" version '1.6'
+    id 'com.github.johnrengelman.shadow' version '1.2.4'
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+
+
+version = "1.0.0-1.12.2.2623"
+group = "nge.lk.mods.simpletabs"
+archivesBaseName = "simpletabs"
+
+sourceCompatibility = targetCompatibility = '1.8'
+compileJava {
+    sourceCompatibility = targetCompatibility = '1.8'
+}
+
+minecraft {
+    version = "1.12.2-14.23.2.2623"
+    runDir = "run"
+
+    mappings = "snapshot_20171003"
+
+    replace "@VERSION@", project.version
+    replaceIn "SimpleTabsMod.java"
+}
+
+repositories {
+    mavenLocal()
+}
+
+dependencies {
+    compile 'nge.lk.mods.commonlib:commonlib:1.0.0-1.12.2.2623'
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+// jar {
+//     manifest {
+//         attributes 'FMLAT': 'simpletabs_at.cfg'
+//     }
+// }
+
+reobf {
+    shadowJar { mappingType = 'SEARGE' }
+}
+
+tasks.build.dependsOn reobfShadowJar
+
+shadowJar {
+    classifier = null
+    dependencies {
+        include(dependency('nge.lk.mods.commonlib:commonlib:1.0.0-1.12.2.2623'))
+    }
+    exclude 'dummyThing'
+    relocate 'nge.lk.mods.commonlib', 'nge.lk.mods.simpletabs.common'
+}
