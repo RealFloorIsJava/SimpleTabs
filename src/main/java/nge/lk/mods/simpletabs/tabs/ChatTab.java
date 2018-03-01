@@ -1,4 +1,4 @@
-package nge.lk.mods.simpletabs;
+package nge.lk.mods.simpletabs.tabs;
 
 import lombok.Getter;
 import lombok.Setter;
