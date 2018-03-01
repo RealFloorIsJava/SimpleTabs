@@ -14,6 +14,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import nge.lk.mods.commonlib.util.DebugUtil;
+import nge.lk.mods.simpletabs.tabs.TabManager;
 import org.lwjgl.input.Mouse;
 
 import java.io.File;
@@ -87,7 +88,7 @@ public class SimpleTabsMod {
     public void onChat(final ClientChatEvent event) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiChat) {
             if (!event.getMessage().startsWith("/")) {
-                final String prefix = tabManager.getActiveChat().getPrefix();
+                final String prefix = tabManager.getActivePrefix();
                 event.setMessage(prefix + event.getMessage());
                 if (event.getMessage().length() > 256) {
                     event.setMessage(event.getMessage().substring(0, 256));
