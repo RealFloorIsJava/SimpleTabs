@@ -122,18 +122,13 @@ public class TabManager {
                             this, tab.getValue(), tab.getKey()));
                 } else if (mouseButton == 2 && tabOffset + tabUnderMouse >= 0) {
                     // Middle mouse button.
-                    if (tabs.size() > 1) {
-                        // Safely deletable.
-                        it.remove();
-                        resetSelectedTab();
-                        needsToSave = true;
-                    } else {
+                    it.remove();
+                    if (tabs.size() == 1) {
                         // Add a default tab back.
-                        it.remove();
                         addDefaultTab();
-                        resetSelectedTab();
-                        needsToSave = true;
                     }
+                    resetSelectedTab();
+                    needsToSave = true;
                 }
                 break;
             }
