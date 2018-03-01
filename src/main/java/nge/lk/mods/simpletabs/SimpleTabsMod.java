@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import nge.lk.mods.commonlib.util.DebugUtil;
+import nge.lk.mods.simpletabs.tabs.TabManager;
 import org.lwjgl.input.Mouse;
 
 import java.io.File;
@@ -114,8 +115,8 @@ public class SimpleTabsMod {
             if (!(msg instanceof ByteBuf)) {
                 if (msg instanceof C01PacketChatMessage) {
                     final C01PacketChatMessage chatMessage = (C01PacketChatMessage) msg;
-                    if (!chatMessage.message.startsWith("/")) {
-                        final String prefix = tabManager.getActiveChat().getPrefix();
+                    if (!chatMessage.getMessage().startsWith("/")) {
+                        final String prefix = tabManager.getActivePrefix();
                         chatMessage.message = prefix + chatMessage.message;
                         if (chatMessage.message.length() > 100) {
                             chatMessage.message = chatMessage.message.substring(0, 100);

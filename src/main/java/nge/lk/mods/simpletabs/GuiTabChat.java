@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.IChatComponent;
+import nge.lk.mods.simpletabs.tabs.TabManager;
 
 import javax.annotation.Nullable;
 
@@ -30,7 +31,9 @@ public class GuiTabChat extends GuiNewChat {
     @Override
     public void drawChat(final int updateCounter) {
         tabManager.updateTabs(getChatScale());
-        tabManager.getActiveChat().drawChat(updateCounter);
+        if (tabManager.getActiveChat() != null) {
+            tabManager.getActiveChat().drawChat(updateCounter);
+        }
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(2.0F, 20.0F, 0.0F);
@@ -60,7 +63,7 @@ public class GuiTabChat extends GuiNewChat {
 
     @Override
     public void addToSentMessages(String message) {
-        final String prefix = tabManager.getActiveChat().getPrefix();
+        final String prefix = tabManager.getActivePrefix();
 
         // Remove any artificially added prefix.
         if (!prefix.isEmpty() && message.startsWith(prefix)) {
@@ -77,12 +80,18 @@ public class GuiTabChat extends GuiNewChat {
 
     @Override
     public void scroll(final int amount) {
+        if (tabManager.getActiveChat() == null) {
+            return;
+        }
         tabManager.getActiveChat().scroll(amount);
     }
 
     @Nullable
     @Override
     public IChatComponent getChatComponent(final int mouseX, final int mouseY) {
+        if (tabManager.getActiveChat() == null) {
+            return null;
+        }
         return tabManager.getActiveChat().getChatComponent(mouseX, mouseY);
     }
 }
