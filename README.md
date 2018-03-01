@@ -1,8 +1,1 @@
-# SimpleTabs
-
-A minecraft mod adding easy-to-use chat tabs.
-
-Project page: (Pending)
-
-This mod requires Forge. It was tested with build #2623 for 1.12.2 and
-build #2588 for 1.11.2
+Check the README on the master branch, this is a diverging backport
