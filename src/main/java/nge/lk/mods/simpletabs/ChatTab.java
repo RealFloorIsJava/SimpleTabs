@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.IChatComponent;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +65,7 @@ public class ChatTab extends GuiNewChat {
     }
 
     @Override
-    public void printChatMessageWithOptionalDeletion(final ITextComponent chatComponent, final int chatLineId) {
+    public void printChatMessageWithOptionalDeletion(final IChatComponent chatComponent, final int chatLineId) {
         super.printChatMessageWithOptionalDeletion(chatComponent, chatLineId);
         unread = true;
     }

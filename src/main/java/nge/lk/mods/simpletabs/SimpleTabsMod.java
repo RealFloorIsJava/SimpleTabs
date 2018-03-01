@@ -8,7 +8,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngame;
-import net.minecraft.network.play.client.CPacketChatMessage;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -98,7 +98,7 @@ public class SimpleTabsMod {
     @SubscribeEvent
     public void clientConnectedToServer(final FMLNetworkEvent.ClientConnectedToServerEvent event) {
         // Inject the packet filter into the queue for this server connection
-        event.getManager().channel().pipeline().addBefore("fml:packet_handler",
+        event.manager.channel().pipeline().addBefore("fml:packet_handler",
                 "SimpleTabsInterceptOutbound", interceptor);
     }
 
@@ -112,12 +112,12 @@ public class SimpleTabsMod {
         @Override
         public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise) {
             if (!(msg instanceof ByteBuf)) {
-                if (msg instanceof CPacketChatMessage) {
-                    final CPacketChatMessage chatMessage = (CPacketChatMessage) msg;
-                    if (!chatMessage.getMessage().startsWith("/")) {
+                if (msg instanceof C01PacketChatMessage) {
+                    final C01PacketChatMessage chatMessage = (C01PacketChatMessage) msg;
+                    if (!chatMessage.message.startsWith("/")) {
                         final String prefix = tabManager.getActiveChat().getPrefix();
                         chatMessage.message = prefix + chatMessage.message;
-                        if (chatMessage.getMessage().length() > 100) {
+                        if (chatMessage.message.length() > 100) {
                             chatMessage.message = chatMessage.message.substring(0, 100);
                         }
                     }

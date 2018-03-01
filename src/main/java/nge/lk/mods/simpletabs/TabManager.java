@@ -5,8 +5,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MathHelper;
 import nge.lk.mods.commonlib.util.DebugUtil;
 import nge.lk.mods.commonlib.util.FileUtil;
 import org.lwjgl.input.Mouse;
@@ -198,7 +198,7 @@ public class TabManager {
         final ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         final int globalScale = scaledResolution.getScaleFactor();
         int x = Mouse.getX() / globalScale - 2;
-        int y = Mouse.getY() / globalScale - 40;
+        int y = Mouse.getY() / globalScale - 27;
         x = MathHelper.floor_float((float) x / chatScale);
         y = MathHelper.floor_float((float) y / chatScale);
 
@@ -242,7 +242,7 @@ public class TabManager {
      * @param chatComponent The chat message.
      * @param chatLineId The chat line.
      */
-    public void printChatMessageWithOptionalDeletion(final ITextComponent chatComponent, final int chatLineId) {
+    public void printChatMessageWithOptionalDeletion(final IChatComponent chatComponent, final int chatLineId) {
         final String plainMessageWithColors = chatComponent.getUnformattedText();
         final StringBuilder plainBuilder = new StringBuilder();
         boolean isEscape = false;

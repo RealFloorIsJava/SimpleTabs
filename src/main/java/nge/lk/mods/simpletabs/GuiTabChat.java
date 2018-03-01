@@ -3,7 +3,7 @@ package nge.lk.mods.simpletabs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.IChatComponent;
 
 import javax.annotation.Nullable;
 
@@ -33,7 +33,7 @@ public class GuiTabChat extends GuiNewChat {
         tabManager.getActiveChat().drawChat(updateCounter);
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(2.0F, 8.0F, 0.0F);
+        GlStateManager.translate(2.0F, 20.0F, 0.0F);
         GlStateManager.scale(getChatScale(), getChatScale(), 1.0f);
 
         if (getChatOpen()) {
@@ -49,7 +49,7 @@ public class GuiTabChat extends GuiNewChat {
     }
 
     @Override
-    public void printChatMessageWithOptionalDeletion(final ITextComponent chatComponent, final int chatLineId) {
+    public void printChatMessageWithOptionalDeletion(final IChatComponent chatComponent, final int chatLineId) {
         tabManager.printChatMessageWithOptionalDeletion(chatComponent, chatLineId);
     }
 
@@ -82,7 +82,7 @@ public class GuiTabChat extends GuiNewChat {
 
     @Nullable
     @Override
-    public ITextComponent getChatComponent(final int mouseX, final int mouseY) {
+    public IChatComponent getChatComponent(final int mouseX, final int mouseY) {
         return tabManager.getActiveChat().getChatComponent(mouseX, mouseY);
     }
 }
