@@ -59,6 +59,12 @@ processResources {
     }
 }
 
+jar {
+    manifest {
+        attributes 'FMLAT': 'simpletabs_at.cfg'
+    }
+}
+
 reobf {
     shadowJar { mappingType = 'SEARGE' }
 }

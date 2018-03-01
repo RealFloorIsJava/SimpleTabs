@@ -1,9 +1,14 @@
 package nge.lk.mods.simpletabs;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngame;
-import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -12,6 +17,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import nge.lk.mods.commonlib.util.DebugUtil;
 import org.lwjgl.input.Mouse;
@@ -33,6 +39,11 @@ public class SimpleTabsMod {
      * The version of the mod.
      */
     public static final String VERSION = "@VERSION@";
+
+    /**
+     * The packet interceptor.
+     */
+    private static final OutboundInterceptor interceptor = new OutboundInterceptor();
 
     /**
      * Whether the chat already was replaced by the mod's chat.
@@ -58,6 +69,7 @@ public class SimpleTabsMod {
     @EventHandler
     public void onInit(final FMLInitializationEvent event) {
         tabManager = new TabManager(tabStorageFile);
+        interceptor.setTabManager(tabManager);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -84,15 +96,34 @@ public class SimpleTabsMod {
     }
 
     @SubscribeEvent
-    public void onChat(final ClientChatEvent event) {
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiChat) {
-            if (!event.getMessage().startsWith("/")) {
-                final String prefix = tabManager.getActiveChat().getPrefix();
-                event.setMessage(prefix + event.getMessage());
-                if (event.getMessage().length() > 256) {
-                    event.setMessage(event.getMessage().substring(0, 256));
+    public void clientConnectedToServer(final FMLNetworkEvent.ClientConnectedToServerEvent event) {
+        // Inject the packet filter into the queue for this server connection
+        event.getManager().channel().pipeline().addBefore("fml:packet_handler",
+                "SimpleTabsInterceptOutbound", interceptor);
+    }
+
+    /**
+     * Interceptor for outgoing chat to add tab prefixes.
+     */
+    private static class OutboundInterceptor extends ChannelOutboundHandlerAdapter {
+
+        private @Setter TabManager tabManager;
+
+        @Override
+        public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise) {
+            if (!(msg instanceof ByteBuf)) {
+                if (msg instanceof CPacketChatMessage) {
+                    final CPacketChatMessage chatMessage = (CPacketChatMessage) msg;
+                    if (!chatMessage.getMessage().startsWith("/")) {
+                        final String prefix = tabManager.getActiveChat().getPrefix();
+                        chatMessage.message = prefix + chatMessage.message;
+                        if (chatMessage.getMessage().length() > 100) {
+                            chatMessage.message = chatMessage.message.substring(0, 100);
+                        }
+                    }
                 }
             }
+            ctx.write(msg, promise);
         }
     }
 }

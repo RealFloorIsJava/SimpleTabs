@@ -44,8 +44,8 @@ public class GuiTabChat extends GuiNewChat {
     }
 
     @Override
-    public void clearChatMessages(final boolean clearSent) {
-        tabManager.getAllChats().forEach(chat -> chat.clearChatMessages(clearSent));
+    public void clearChatMessages() {
+        tabManager.getAllChats().forEach(GuiNewChat::clearChatMessages);
     }
 
     @Override

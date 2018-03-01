@@ -140,7 +140,7 @@ public class TabManager {
      * Draws the labels of the tabs.
      */
     public void drawTabLabels() {
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + 3;
         final int leftWidth = fontRenderer.getStringWidth("<") + 3;
         final int rightWidth = fontRenderer.getStringWidth(">") + 3;
@@ -194,13 +194,13 @@ public class TabManager {
      * Updates the selected tab.
      */
     public void updateTabs(final float chatScale) {
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         final ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         final int globalScale = scaledResolution.getScaleFactor();
         int x = Mouse.getX() / globalScale - 2;
         int y = Mouse.getY() / globalScale - 40;
-        x = MathHelper.floor((float) x / chatScale);
-        y = MathHelper.floor((float) y / chatScale);
+        x = MathHelper.floor_float((float) x / chatScale);
+        y = MathHelper.floor_float((float) y / chatScale);
 
         tabUnderMouse = -1;
         if (y < 0 && y >= -11) {
