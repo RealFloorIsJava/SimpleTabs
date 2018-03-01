@@ -246,7 +246,8 @@ public class TabDisplay {
             }
 
             // Special case group cycle.
-            if (x >= finalBegin + rightWidth + plusWidth + 1 && x <= finalBegin + rightWidth + plusWidth + groupWidth) {
+            if (x >= finalBegin + rightWidth + plusWidth + 2
+                    && x <= finalBegin + rightWidth + plusWidth + groupWidth + 1) {
                 tabUnderMouse = CYCLE_GROUP;
             }
 
