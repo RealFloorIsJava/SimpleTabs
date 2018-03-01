@@ -35,6 +35,11 @@ public class ChatTab extends GuiNewChat {
     @Getter private boolean literal;
 
     /**
+     * Whether this tab has a whitelist.
+     */
+    @Getter private boolean whitelist;
+
+    /**
      * The prefix for sent messages in this tab.
      */
     @Getter @Setter private String prefix;
@@ -44,10 +49,12 @@ public class ChatTab extends GuiNewChat {
      *
      * @param mc The minecraft reference.
      */
-    public ChatTab(final Minecraft mc, final String pattern, final boolean literal, final String prefix) {
+    public ChatTab(final Minecraft mc, final String pattern, final boolean literal, final boolean whitelist,
+                   final String prefix) {
         super(mc);
         this.pattern = pattern;
         this.literal = literal;
+        this.whitelist = whitelist;
         this.prefix = prefix;
         filter = Pattern.compile(pattern, literal ? Pattern.LITERAL : 0).matcher("");
     }
@@ -57,10 +64,12 @@ public class ChatTab extends GuiNewChat {
      *
      * @param pattern The new pattern.
      * @param literal Whether the pattern will be escaped.
+     * @param whitelist Whether the tab implements a whitelist or a blacklist.
      */
-    public void updatePattern(final String pattern, final boolean literal) {
+    public void updatePattern(final String pattern, final boolean literal, final boolean whitelist) {
         this.pattern = pattern;
         this.literal = literal;
+        this.whitelist = whitelist;
         filter = Pattern.compile(pattern, literal ? Pattern.LITERAL : 0).matcher("");
     }
 
@@ -79,7 +88,7 @@ public class ChatTab extends GuiNewChat {
      */
     public boolean acceptsMessage(final CharSequence message) {
         filter.reset(message);
-        return filter.find();
+        return filter.find() == whitelist;
     }
 
     /**
@@ -95,6 +104,6 @@ public class ChatTab extends GuiNewChat {
      * @return The export string.
      */
     public String getExport() {
-        return pattern + "§" + Boolean.toString(literal) + "§" + prefix;
+        return pattern + "§" + Boolean.toString(literal) + "§" + prefix + "§" + Boolean.toString(whitelist);
     }
 }

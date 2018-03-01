@@ -275,8 +275,9 @@ public class TabManager {
      * @param literal Whether the pattern is literal.
      * @param prefix The prefix for sent chat messages.
      */
-    public void createTab(final String title, final String pattern, final boolean literal, final String prefix) {
-        tabs.put(title, new ChatTab(Minecraft.getMinecraft(), pattern, literal, prefix));
+    public void createTab(final String title, final String pattern, final boolean literal, final boolean whitelist,
+                          final String prefix) {
+        tabs.put(title, new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, prefix));
     }
 
     /**
@@ -295,7 +296,7 @@ public class TabManager {
      */
     public void saveState() {
         try {
-            FileUtil.writeLineStorage(2, saveFile, getExportIterator());
+            FileUtil.writeLineStorage(3, saveFile, getExportIterator());
         } catch (final IOException e) {
             DebugUtil.recoverableError(e);
         }
@@ -309,13 +310,19 @@ public class TabManager {
             FileUtil.readLineStorage(saveFile, (line, lineNo) -> {
                 // Avoid trimming of the array by adding a high limit.
                 final String[] split = line.split("§", 99);
-                createTab(split[0], split[1], Boolean.parseBoolean(split[2]), split[3]);
+                createTab(split[0], split[1], Boolean.parseBoolean(split[2]), Boolean.parseBoolean(split[4]), split[3]);
             }, (version, line) -> {
+                int newVersion = version;
                 String newLine = line;
-                if (version == 1) { // Converter: v1 -> v2
+                if (newVersion == 1) { // Converter: v1 -> v2
                     // Change: Added prefix as last split token.
                     newLine += "§";
-                    // version++; // Only need this when converting between multiple versions.
+                    newVersion++;
+                }
+                if (newVersion == 2) { // Converter: v2 -> v3
+                    // Change: Added whitelist flag.
+                    newLine += "§true";
+                    // newVersion++; // Only need this when converting between multiple versions.
                 }
                 return newLine;
             });
@@ -364,6 +371,6 @@ public class TabManager {
      * Adds a default tab.
      */
     private void addDefaultTab() {
-        tabs.put("General", new ChatTab(Minecraft.getMinecraft(), ".*", false, ""));
+        tabs.put("General", new ChatTab(Minecraft.getMinecraft(), ".*", false, true, ""));
     }
 }
