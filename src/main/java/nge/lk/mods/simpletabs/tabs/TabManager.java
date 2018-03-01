@@ -39,7 +39,7 @@ public class TabManager {
     /**
      * The active tab group.
      */
-    private int activeGroup;
+    @Getter private int activeGroup;
 
     /**
      * The currently active tab.
@@ -152,6 +152,34 @@ public class TabManager {
         final int tabAmount = tabs.get(activeGroup).size();
         if (tabOffset + TabDisplay.TABS_PER_PAGE < tabAmount) {
             tabOffset += TabDisplay.TABS_PER_PAGE;
+        }
+    }
+
+    /**
+     * Cycles the current tab group.
+     */
+    public void cycleTabGroup() {
+        if (activeGroup + 1 < tabs.size()) {
+            activeGroup++;
+        } else {
+            assert activeGroup + 1 == tabs.size() : "invalid current group";
+            // Either the first group is selected, or a new group is created.
+            // A new group is only created if the current group is changed in any way.
+            final Map<String, ChatTab> group = tabs.get(activeGroup);
+            if (group.size() == 1) {
+                final String tabName = group.keySet().stream().findFirst().get();
+                if (tabName.equals("General")) {
+                    final ChatTab tab = group.values().stream().findFirst().get();
+                    if (!tab.isLiteral() && tab.isWhitelist() && tab.getPattern().equals(".*")
+                            && tab.getPrefix().isEmpty()) {
+                        activeGroup = 0;
+                        return;
+                    }
+                }
+            }
+            activeGroup++;
+            tabs.add(new LinkedHashMap<>());
+            addDefaultTab();
         }
     }
 
