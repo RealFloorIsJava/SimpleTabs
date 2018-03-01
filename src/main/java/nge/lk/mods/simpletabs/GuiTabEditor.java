@@ -57,6 +57,11 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
     private ButtonElement expertModeButton;
 
     /**
+     * The button for switching between whitelist and blacklist.
+     */
+    private ButtonElement whitelistButton;
+
+    /**
      * The button to save the tab and return to the parent.
      */
     private ButtonElement saveButton;
@@ -101,7 +106,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
             if (editingTab != null) {
                 // Save the changes.
                 editingTab.updatePattern(patternElement.getTextField().getText(),
-                        !((Boolean) expertModeButton.getMetadata()));
+                        !((Boolean) expertModeButton.getMetadata()), ((Boolean) whitelistButton.getMetadata()));
                 editingTab.setPrefix(prefixElement.getTextField().getText());
             } else {
                 // Create a new tab.
@@ -109,6 +114,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         nameElement.getTextField().getText(),
                         patternElement.getTextField().getText(),
                         !((Boolean) expertModeButton.getMetadata()),
+                        ((Boolean) whitelistButton.getMetadata()),
                         prefixElement.getTextField().getText()
                 );
             }
@@ -123,9 +129,13 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
             expertModeButton.setMetadata(!((Boolean) expertModeButton.getMetadata()));
 
             // Update visuals to reflect the change.
-            final String indicator = ((Boolean) expertModeButton.getMetadata()) ? "On" : "Off";
-            expertModeButton.getButton().displayString = "Expert Mode: " + indicator;
-            updateCaption();
+            updateCaptions();
+        } else if (buttonElement == whitelistButton) {
+            // Toggle the button's state which is stored in the metadata.
+            whitelistButton.setMetadata(!((Boolean) whitelistButton.getMetadata()));
+
+            // Update visuals to reflect the change.
+            updateCaptions();
         }
     }
 
@@ -160,29 +170,32 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
         addBlank(new Positioning().breakRow().absoluteHeight(15));
 
         addText(new Positioning().breakRow()).setText("Tab Name", 0xA0A0A0);
-        nameElement = addInput(new Positioning().relativeWidth(85).absoluteHeight(20).breakRow());
+        nameElement = addInput(new Positioning().relativeWidth(40).absoluteHeight(20));
         nameElement.getTextField().setMaxStringLength(8); // See also TabManager#MAXIMUM_TAB_NAME
         nameElement.getTextField().setText(titlePreset != null ? titlePreset : "");
         nameElement.getTextField().setEnabled(editingTab == null);
         nameElement.getTextField().setCursorPositionZero();
+        addBlank(new Positioning().relativeWidth(4));
+
+        expertModeButton = addButton(this,
+                new Positioning().relativeWidth(40).absoluteHeight(20).breakRow());
+        expertModeButton.setMetadata(editingTab != null && !editingTab.isLiteral());
         addBlank(new Positioning().breakRow().absoluteHeight(10));
 
         patternCaption = addText(new Positioning().breakRow());
-
         patternElement = addInput(new Positioning().relativeWidth(40).absoluteHeight(20));
         patternElement.getTextField().setMaxStringLength(1024);
         patternElement.getTextField().setText(editingTab != null ? editingTab.getPattern() : "");
         patternElement.getTextField().setCursorPositionZero();
         addBlank(new Positioning().relativeWidth(4));
 
-        expertModeButton = addButton(this,
+        whitelistButton = addButton(this,
                 new Positioning().relativeWidth(40).absoluteHeight(20).breakRow());
-        expertModeButton.setMetadata(editingTab != null && !editingTab.isLiteral());
-        final String indicator = ((Boolean) expertModeButton.getMetadata()) ? "On" : "Off";
-        expertModeButton.getButton().displayString = "Expert Mode: " + indicator;
+        whitelistButton.setMetadata(editingTab == null || editingTab.isWhitelist());
         addBlank(new Positioning().breakRow().absoluteHeight(10));
 
-        updateCaption();
+        // At this point, all elements having captions are created.
+        updateCaptions();
 
         addText(new Positioning().breakRow()).setText("Tab Prefix (for messages sent in this tab)",
                 0xA0A0A0);
@@ -220,9 +233,15 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
     }
 
     /**
-     * Updates the caption of the tab pattern input.
+     * Updates the captions of the tab pattern input and the toggle buttons.
      */
-    private void updateCaption() {
+    private void updateCaptions() {
+        final String indicator = ((Boolean) expertModeButton.getMetadata()) ? "On" : "Off";
+        expertModeButton.getButton().displayString = "Expert Mode: " + indicator;
+
+        whitelistButton.getButton().displayString =
+                ((Boolean) whitelistButton.getMetadata()) ? "Whitelist" : "Blacklist";
+
         if ((Boolean) expertModeButton.getMetadata()) {
             // Provide expert caption.
             patternCaption.setText("Tab Pattern (regular expression)", 0xA0A0A0);
