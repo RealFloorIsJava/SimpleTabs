@@ -6,6 +6,8 @@ import nge.lk.mods.commonlib.gui.factory.Positioning;
 import nge.lk.mods.commonlib.gui.factory.element.ButtonElement;
 import nge.lk.mods.commonlib.gui.factory.element.InputElement;
 import nge.lk.mods.commonlib.gui.factory.element.TextElement;
+import nge.lk.mods.simpletabs.tabs.ChatTab;
+import nge.lk.mods.simpletabs.tabs.TabManager;
 
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -154,7 +156,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
         }
 
         // Duplicate name check.
-        if (tabManager.doesTabExist(nameElement.getTextField().getText()) && editingTab == null) {
+        if (tabManager.doesTabExistInActiveGroup(nameElement.getTextField().getText()) && editingTab == null) {
             canSave = false;
         }
 
