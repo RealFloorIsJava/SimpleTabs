@@ -20,7 +20,7 @@ plugins {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "1.0.0-1.9.4.2051"
+version = "1.1.0-1.9.4.2051"
 group = "nge.lk.mods.simpletabs"
 archivesBaseName = "simpletabs"
 
