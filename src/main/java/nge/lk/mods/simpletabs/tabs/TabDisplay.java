@@ -48,9 +48,14 @@ public class TabDisplay {
     private static final int ADD_TAB = -4;
 
     /**
+     * The mouse is over the 'Cycle Group' button.
+     */
+    private static final int CYCLE_GROUP = -5;
+
+    /**
      * The padding between tab labels.
      */
-    private static final int TAB_PADDING = 3;
+    private static final int PADDING = 3;
 
     /**
      * For some reason, the leftmost x coordinate is not 0.
@@ -99,6 +104,8 @@ public class TabDisplay {
             tabManager.nextTabPage();
         } else if (tabUnderMouse == ADD_TAB) {
             tabManager.editTab(null, null);
+        } else if (tabUnderMouse == CYCLE_GROUP) {
+            tabManager.cycleTabGroup();
         } else if (tabUnderMouse != NO_TAB) {
             assert tabUnderMouse >= 0 : "unchecked flag value";
 
@@ -135,10 +142,12 @@ public class TabDisplay {
      */
     public void drawTabLabels() {
         final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-        final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + TAB_PADDING;
-        final int leftWidth = fontRenderer.getStringWidth("<") + TAB_PADDING;
-        final int rightWidth = fontRenderer.getStringWidth(">") + TAB_PADDING;
-        final int plusWidth = fontRenderer.getStringWidth("+") + TAB_PADDING;
+        final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + PADDING;
+        final int leftWidth = fontRenderer.getStringWidth("<") + PADDING;
+        final int rightWidth = fontRenderer.getStringWidth(">") + PADDING;
+        final int plusWidth = fontRenderer.getStringWidth("+") + PADDING;
+        final int groupWidth =
+                fontRenderer.getStringWidth(Integer.toString(tabManager.getActiveGroup() + 1)) + PADDING;
 
         // The position after the tabs -- the ones represent the margins.
         int finalBegin = LEFTMOST_X_COORDINATE + (leftWidth + 1) + (tabWidth + 1) * 5;
@@ -186,6 +195,13 @@ public class TabDisplay {
         Gui.drawRect(finalBegin, 0, finalBegin + plusWidth, 10,
                 tabUnderMouse == ADD_TAB ? COLOR_BG_HIGHLIGHT : COLOR_BG_NORMAL);
         fontRenderer.drawString("+", finalBegin + 2, 1, COLOR_FONT);
+        finalBegin += plusWidth + 1;
+
+        // Cycle group button.
+        Gui.drawRect(finalBegin, 0, finalBegin + groupWidth, 10,
+                tabUnderMouse == CYCLE_GROUP ? COLOR_BG_HIGHLIGHT : COLOR_BG_NORMAL);
+        fontRenderer.drawString(Integer.toString(tabManager.getActiveGroup() + 1), finalBegin + 2, 1,
+                COLOR_FONT);
     }
 
     /**
@@ -206,10 +222,12 @@ public class TabDisplay {
         tabUnderMouse = NO_TAB;
         // First: Check the correct Y position. This is the same for all labels.
         if (y < 0 && y >= -11) {
-            final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + TAB_PADDING;
-            final int leftWidth = fontRenderer.getStringWidth("<") + TAB_PADDING;
-            final int rightWidth = fontRenderer.getStringWidth(">") + TAB_PADDING;
-            final int plusWidth = fontRenderer.getStringWidth("+") + TAB_PADDING;
+            final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + PADDING;
+            final int leftWidth = fontRenderer.getStringWidth("<") + PADDING;
+            final int rightWidth = fontRenderer.getStringWidth(">") + PADDING;
+            final int plusWidth = fontRenderer.getStringWidth("+") + PADDING;
+            final int groupWidth =
+                    fontRenderer.getStringWidth(Integer.toString(tabManager.getActiveGroup() + 1)) + PADDING;
             final int finalBegin = LEFTMOST_X_COORDINATE + (leftWidth + 1) + (tabWidth + 1) * 5;
 
             // Special case <.
@@ -225,6 +243,11 @@ public class TabDisplay {
             // Special case +.
             if (x >= finalBegin + rightWidth + 1 && x <= finalBegin + rightWidth + plusWidth) {
                 tabUnderMouse = ADD_TAB;
+            }
+
+            // Special case group cycle.
+            if (x >= finalBegin + rightWidth + plusWidth + 1 && x <= finalBegin + rightWidth + plusWidth + groupWidth) {
+                tabUnderMouse = CYCLE_GROUP;
             }
 
             final int offsetX = x - (LEFTMOST_X_COORDINATE + (leftWidth + 1));
