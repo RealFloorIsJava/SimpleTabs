@@ -72,7 +72,7 @@ public class TabManager {
     /**
      * The currently active tab.
      */
-    private String activeTab = "General";
+    private String activeTab;
 
     /**
      * Constructor.
@@ -83,15 +83,13 @@ public class TabManager {
         this.saveFile = saveFile;
         tabs = new LinkedHashMap<>();
 
-        // Add a hardcoded general tab.
-        tabs.put("General", new ChatTab(Minecraft.getMinecraft(), ".", true, "") {
-            @Override
-            public boolean acceptsMessage(final CharSequence message) {
-                return true;
-            }
-        });
-
         loadState();
+
+        if (tabs.isEmpty()) {
+            addDefaultTab();
+        }
+
+        activeTab = tabs.keySet().stream().findFirst().get();
     }
 
     /**
@@ -119,14 +117,23 @@ public class TabManager {
                 }
                 if (mouseButton == 0) {
                     activeTab = tab.getKey();
-                } else if (mouseButton == 1 && tabOffset + tabUnderMouse > 0) {
+                } else if (mouseButton == 1 && tabOffset + tabUnderMouse >= 0) {
                     Minecraft.getMinecraft().displayGuiScreen(new GuiTabEditor(Minecraft.getMinecraft().currentScreen,
                             this, tab.getValue(), tab.getKey()));
-                } else if (mouseButton == 2 && tabOffset + tabUnderMouse > 0) {
+                } else if (mouseButton == 2 && tabOffset + tabUnderMouse >= 0) {
                     // Middle mouse button.
-                    it.remove();
-                    resetSelectedTab();
-                    needsToSave = true;
+                    if (tabs.size() > 1) {
+                        // Safely deletable.
+                        it.remove();
+                        resetSelectedTab();
+                        needsToSave = true;
+                    } else {
+                        // Add a default tab back.
+                        it.remove();
+                        addDefaultTab();
+                        resetSelectedTab();
+                        needsToSave = true;
+                    }
                 }
                 break;
             }
@@ -323,10 +330,10 @@ public class TabManager {
     }
 
     /**
-     * Resets the selected tab to the 'General' tab.
+     * Resets the selected tab to the first tab.
      */
     private void resetSelectedTab() {
-        activeTab = "General";
+        activeTab = tabs.keySet().stream().findFirst().get();
         tabOffset = 0;
         tabUnderMouse = -1;
     }
@@ -355,7 +362,13 @@ public class TabManager {
      * @return An iterator over all export strings.
      */
     private Iterator<String> getExportIterator() {
-        return tabs.entrySet().stream().filter(entry -> !entry.getKey().equals("General"))
-                .map(entry -> entry.getKey() + "§" + entry.getValue().getExport()).iterator();
+        return tabs.entrySet().stream().map(entry -> entry.getKey() + "§" + entry.getValue().getExport()).iterator();
+    }
+
+    /**
+     * Adds a default tab.
+     */
+    private void addDefaultTab() {
+        tabs.put("General", new ChatTab(Minecraft.getMinecraft(), ".*", false, ""));
     }
 }
