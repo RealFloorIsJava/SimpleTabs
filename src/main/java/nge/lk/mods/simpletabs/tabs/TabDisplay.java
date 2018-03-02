@@ -141,7 +141,7 @@ public class TabDisplay {
      * Draws the labels of the tabs.
      */
     public void drawTabLabels() {
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         final int tabWidth = fontRenderer.getStringWidth(MAXIMUM_TAB_NAME) + PADDING;
         final int leftWidth = fontRenderer.getStringWidth("<") + PADDING;
         final int rightWidth = fontRenderer.getStringWidth(">") + PADDING;
@@ -208,7 +208,7 @@ public class TabDisplay {
      * Updates the selected tab.
      */
     public void updateTabs(final float chatScale) {
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         final ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         final int globalScale = scaledResolution.getScaleFactor();
 
