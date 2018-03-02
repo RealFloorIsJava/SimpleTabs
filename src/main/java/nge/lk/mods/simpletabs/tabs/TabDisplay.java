@@ -8,7 +8,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
-import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
@@ -110,9 +109,7 @@ public class TabDisplay {
             assert tabUnderMouse >= 0 : "unchecked flag value";
 
             int skip = tabManager.getTabOffset() + tabUnderMouse;
-            final Iterator<Entry<String, ChatTab>> it = tabManager.getActiveTabGroup().iterator();
-            while (it.hasNext()) {
-                final Entry<String, ChatTab> tab = it.next();
+            for (final Entry<String, ChatTab> tab : tabManager.getActiveTabGroup()) {
                 if (skip-- > 0) {
                     continue;
                 }
@@ -126,7 +123,7 @@ public class TabDisplay {
                     tabManager.editTab(tab.getKey(), tab.getValue());
                 } else if (mouseButton == 2) {
                     // Middle mouse button.
-                    it.remove();
+                    tabManager.deleteTab(tab.getKey());
                     resetSelectedTab();
                     tabManager.saveState();
                 }
