@@ -3,7 +3,7 @@ package nge.lk.mods.simpletabs.tabs;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.IChatComponent;
 import nge.lk.mods.simpletabs.GuiTabEditor;
 
 import java.io.File;
@@ -82,7 +82,7 @@ public class TabManager {
      * @param chatComponent The chat message.
      * @param chatLineId The chat line.
      */
-    public void printChatMessageWithOptionalDeletion(final ITextComponent chatComponent, final int chatLineId) {
+    public void printChatMessageWithOptionalDeletion(final IChatComponent chatComponent, final int chatLineId) {
         final String plainMessageWithColors = chatComponent.getUnformattedText();
         final StringBuilder plainBuilder = new StringBuilder();
         boolean isEscape = false;

@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Mouse;
 
 import java.util.Map.Entry;
@@ -211,7 +211,7 @@ public class TabDisplay {
 
         // These magic values are somehow needed to get the coordinates to match the ones in the draw method.
         int x = Mouse.getX() / globalScale - 2;
-        int y = Mouse.getY() / globalScale - 40;
+        int y = Mouse.getY() / globalScale - 27;
 
         x = MathHelper.floor_float((float) x / chatScale);
         y = MathHelper.floor_float((float) y / chatScale);
