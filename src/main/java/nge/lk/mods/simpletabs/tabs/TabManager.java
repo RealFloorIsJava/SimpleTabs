@@ -214,6 +214,17 @@ public class TabManager {
         // Invariant: The current tab is valid, so no change is needed even if the tab name doesn't exist.
     }
 
+    /**
+     * Deletes the tab with the given name.
+     *
+     * @param key The name.
+     */
+    public void deleteTab(final String key) {
+        if (doesTabExistInActiveGroup(key)) {
+            tabs.get(activeGroup).remove(key);
+        }
+    }
+
     public void resetSelectedTab() {
         activeTab = tabs.get(activeGroup).isEmpty() ? null : tabs.get(activeGroup).keySet().stream().findFirst().get();
         tabOffset = 0;
@@ -279,6 +290,11 @@ public class TabManager {
         return tabs.get(activeGroup).get(activeTab);
     }
 
+    /**
+     * Fetches the prefix of the active tab.
+     *
+     * @return The prefix.
+     */
     public String getActivePrefix() {
         if (getActiveChat() != null) {
             return getActiveChat().getPrefix();
