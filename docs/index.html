@@ -29,22 +29,85 @@
         
         <h2>SimpleTabs</h2>
           SimpleTabs is a Minecraft mod adding easy-to-use tabs to the chat.
-          <br>
-          It is currently available for Minecraft versions 1.8.9, 1.9.4,
-          1.10.2, 1.11.2 and 1.12.2.
+          <p>
+            It is currently available for Minecraft versions 1.8.9, 1.9.4,
+            1.10.2, 1.11.2 and 1.12.2.
+          </p>
+        
+        <h3>Features</h3>
+          <ul>
+            <li>Seperate chat tabs</li>
+            <li>Regular expression support and simple keyword support</li>
+            <li>Prefixes for sent messages on a per-tab basis</li>
+            <li>Unread tabs are highlighted</li>
+            <li>Seperate tab groups for per-server configurations</li>
+            <li>Blacklist and whitelist patterns</li>
+          </ul>
         
         <h3>Installation</h3>
           <ol>
             <li>Install <a href="http://www.minecraftforge.net/forum/">Minecraft Forge</a>.</li>
-            <li>Download the release for your minecraft version (see table below).</li>
+            <li>Download the release for your minecraft version (see section below).</li>
             <li>Put the downloaded JAR file into your <code>mods/</code> directory.</li>
           </ol>
-          
+        
         <h3>Usage</h3>
-          WIP
+          When you first install SimpleTabs and open your chat you will see a few buttons below the chat window.
+          <img class="fitimg" src="./images/chat_buttons.png">
+          <p>
+            The button showing a number on the very right displays the number of the current <strong>tab group</strong>.
+            Tab groups provide a way for you to seperate tab settings for different servers. 
+            Clicking on this button cycles through the existing tab groups or creates a new one.
+          </p>
+          <p>
+            The navigation buttons &lt; and &gt; serve for navigation through <strong>pages of tabs</strong> in a single tab group.
+          </p>
+          <p>
+            The plus button adds a new tab in the current tab group and opens the editor for it.
+          </p>
+          <p>
+            Finally, there is a button for each tab on the current page of the active tab group. Clicking on the tab activates the chat of this tab.
+            Additionally, right-clicking on the tab opens the editor for the clicked tab, clicking on a tab with the middle mouse button deletes the tab.
+            Unread tabs are highlighted in red and the currently active tab is printed in bold letters.
+          </p>
+          <p>
+            For adding tabs and editing tabs, the tab editor is used.
+          </p>
+          <img class="fitimg" src="./images/editor.png">
+          <p>
+            You can enter the name of a tab in the top-left text field of the editor.
+          </p>
+          <p>
+            The text field below that contains the <strong>pattern</strong> for the tab.
+            In the <em>default mode</em> the pattern is a single keyword that has to be present
+            in a chat message for the message to be displayed in the tab.
+          </p>
+          <p>
+            The button in the top-right corner toggles between default mode and
+            <strong>expert mode</strong>. In expert mode the pattern is not a single keyword
+            but a <a href="https://www.debuggex.com/">Java regular expression</a>.
+          </p>
+          <p>
+            The button below that toggles the tab between <strong>whitelist</strong> mode and
+            <strong>blacklist</strong> mode. In whitelist mode, only messages matching the pattern
+            are displayed in the tab. On the other hand in blacklist mode only messages that are not
+            matching the pattern are displayed in the tab.
+          </p>
+          <p>
+            Finally there is the text field for the <strong>prefix</strong>.
+            The prefix will be added in front of all regular sent chat messages (i.e. not commands).
+            For example this can be used to automatically add a party chat command in a party chat tab!
+          </p>
           
         <h3>Releases</h3>
-          WIP
+          The number in parenthesis specifies the Forge build the release was tested with.<br>
+          <p>
+            <a href="https://github.com/LordKorea/SimpleTabs/releases/download/v1.1.0/simpletabs-1.1.0-1.12.2.2623.jar">Release 1.1.0 for Minecraft 1.12.2 (#2623)</a><br>
+            <a href="https://github.com/LordKorea/SimpleTabs/releases/download/v1.1.0/simpletabs-1.1.0-1.11.2.2588.jar">Release 1.1.0 for Minecraft 1.11.2 (#2588)</a><br>
+            <a href="https://github.com/LordKorea/SimpleTabs/releases/download/v1.1.0/simpletabs-1.1.0-1.10.2.2511.jar">Release 1.1.0 for Minecraft 1.10.2 (#2511)</a><br>
+            <a href="https://github.com/LordKorea/SimpleTabs/releases/download/v1.1.0/simpletabs-1.1.0-1.9.4.2051.jar">Release 1.1.0 for Minecraft 1.9.4 (#2051)</a><br>
+            <a href="https://github.com/LordKorea/SimpleTabs/releases/download/v1.1.0/simpletabs-1.1.0-1.8.9.2318.jar">Release 1.1.0 for Minecraft 1.8.9 (#2318)</a><br>
+          </p>
         
       </section>
     </div>
