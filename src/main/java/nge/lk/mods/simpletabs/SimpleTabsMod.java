@@ -4,7 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import io.netty.channel.ChannelPromise;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiIngame;
@@ -42,11 +42,6 @@ public class SimpleTabsMod {
     public static final String VERSION = "@VERSION@";
 
     /**
-     * The packet interceptor.
-     */
-    private static final OutboundInterceptor interceptor = new OutboundInterceptor();
-
-    /**
      * Whether the chat already was replaced by the mod's chat.
      */
     private boolean chatReplaced;
@@ -70,7 +65,6 @@ public class SimpleTabsMod {
     @EventHandler
     public void onInit(final FMLInitializationEvent event) {
         tabManager = new TabManager(tabStorageFile);
-        interceptor.setTabManager(tabManager);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -100,15 +94,16 @@ public class SimpleTabsMod {
     public void clientConnectedToServer(final FMLNetworkEvent.ClientConnectedToServerEvent event) {
         // Inject the packet filter into the queue for this server connection
         event.getManager().channel().pipeline().addBefore("fml:packet_handler",
-                "SimpleTabsInterceptOutbound", interceptor);
+                "SimpleTabsInterceptOutbound", new OutboundInterceptor(tabManager));
     }
 
     /**
      * Interceptor for outgoing chat to add tab prefixes.
      */
+    @RequiredArgsConstructor
     private static class OutboundInterceptor extends ChannelOutboundHandlerAdapter {
 
-        private @Setter TabManager tabManager;
+        private final TabManager tabManager;
 
         @Override
         public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise) {
