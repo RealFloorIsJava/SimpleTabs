@@ -91,7 +91,7 @@ public class ChatTab extends GuiNewChat {
         if (notify) {
             final float before = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, 1.0f);
-            Minecraft.getMinecraft().player.playSound(SoundEvents.BLOCK_NOTE_HARP, 1.0f, 1.0f);
+            Minecraft.getMinecraft().player.playSound(SoundEvents.BLOCK_NOTE_PLING, 1.0f, 2.0f);
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, before);
         }
     }
