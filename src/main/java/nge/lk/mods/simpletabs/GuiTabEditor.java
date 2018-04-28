@@ -64,6 +64,11 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
     private ButtonElement whitelistButton;
 
     /**
+     * A button for toggling notification sounds.
+     */
+    private ButtonElement notifyButton;
+
+    /**
      * The button to save the tab and return to the parent.
      */
     private ButtonElement saveButton;
@@ -108,7 +113,8 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
             if (editingTab != null) {
                 // Save the changes.
                 editingTab.updatePattern(patternElement.getTextField().getText(),
-                        !((Boolean) expertModeButton.getMetadata()), ((Boolean) whitelistButton.getMetadata()));
+                        !((Boolean) expertModeButton.getMetadata()), ((Boolean) whitelistButton.getMetadata()),
+                        ((Boolean) notifyButton.getMetadata()));
                 editingTab.setPrefix(prefixElement.getTextField().getText());
             } else {
                 // Create a new tab.
@@ -117,7 +123,8 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         patternElement.getTextField().getText(),
                         !((Boolean) expertModeButton.getMetadata()),
                         ((Boolean) whitelistButton.getMetadata()),
-                        prefixElement.getTextField().getText()
+                        prefixElement.getTextField().getText(),
+                        ((Boolean) notifyButton.getMetadata())
                 );
             }
             tabManager.saveState();
@@ -137,6 +144,12 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
             whitelistButton.setMetadata(!((Boolean) whitelistButton.getMetadata()));
 
             // Update visuals to reflect the change.
+            updateCaptions();
+        } else if (buttonElement == notifyButton) {
+            // Toggle the button's state in the metadata.
+            notifyButton.setMetadata(!((Boolean) notifyButton.getMetadata()));
+
+            // Update visuals.
             updateCaptions();
         }
     }
@@ -192,8 +205,12 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
         addBlank(new Positioning().relativeWidth(4));
 
         whitelistButton = addButton(this,
-                new Positioning().relativeWidth(40).absoluteHeight(20).breakRow());
+                new Positioning().relativeWidth(19).absoluteHeight(20));
         whitelistButton.setMetadata(editingTab == null || editingTab.isWhitelist());
+        addBlank(new Positioning().relativeWidth(1));
+
+        notifyButton = addButton(this, new Positioning().relativeWidth(19).absoluteHeight(20).breakRow());
+        notifyButton.setMetadata(editingTab != null && editingTab.isNotify());
         addBlank(new Positioning().breakRow().absoluteHeight(10));
 
         // At this point, all elements having captions are created.
@@ -211,7 +228,9 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                 0xA0A0A0);
         addText(new Positioning().breakRow()).setText("You can edit existing tabs by right clicking them",
                 0xA0A0A0);
-        addText(new Positioning()).setText("Don't use expert mode unless you understand regular expressions!",
+        addText(new Positioning().breakRow()).setText("Don't use expert mode unless you understand regular expressions!",
+                0xA0A0A0);
+        addText(new Positioning()).setText("Notifications play a sound when a new message is received in this tab",
                 0xA0A0A0);
 
         saveButton = addButton(this, new Positioning().alignBottom().relativeWidth(27).absoluteHeight(20));
@@ -243,6 +262,9 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
 
         whitelistButton.getButton().displayString =
                 ((Boolean) whitelistButton.getMetadata()) ? "Whitelist" : "Blacklist";
+
+        notifyButton.getButton().displayString =
+                ((Boolean) notifyButton.getMetadata()) ? "Notify: Yes" : "Notify: No";
 
         if ((Boolean) expertModeButton.getMetadata()) {
             // Provide expert caption.

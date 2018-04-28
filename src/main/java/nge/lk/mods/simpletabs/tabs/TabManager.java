@@ -116,8 +116,9 @@ public class TabManager {
      * @param prefix The prefix for sent chat messages.
      */
     public void createTab(final String title, final String pattern, final boolean literal, final boolean whitelist,
-                          final String prefix) {
-        tabs.get(activeGroup).put(title, new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, prefix));
+                          final String prefix, final boolean notify) {
+        tabs.get(activeGroup).put(title, new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, notify,
+                prefix));
     }
 
     /**
@@ -266,7 +267,7 @@ public class TabManager {
      */
     private void addDefaultTab() {
         tabs.get(activeGroup).put("General", new ChatTab(Minecraft.getMinecraft(), ".*", false,
-                true, ""));
+                true, false, ""));
     }
 
     /**

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 
 import java.util.regex.Matcher;
@@ -40,6 +42,11 @@ public class ChatTab extends GuiNewChat {
     @Getter private boolean whitelist;
 
     /**
+     * Whether this tab will play sound notifications.
+     */
+    @Getter private boolean notify;
+
+    /**
      * The prefix for sent messages in this tab.
      */
     @Getter @Setter private String prefix;
@@ -50,11 +57,12 @@ public class ChatTab extends GuiNewChat {
      * @param mc The minecraft reference.
      */
     public ChatTab(final Minecraft mc, final String pattern, final boolean literal, final boolean whitelist,
-                   final String prefix) {
+                   final boolean notify, final String prefix) {
         super(mc);
         this.pattern = pattern;
         this.literal = literal;
         this.whitelist = whitelist;
+        this.notify = notify;
         this.prefix = prefix;
         filter = Pattern.compile(pattern, literal ? Pattern.LITERAL : 0).matcher("");
     }
@@ -65,11 +73,14 @@ public class ChatTab extends GuiNewChat {
      * @param pattern The new pattern.
      * @param literal Whether the pattern will be escaped.
      * @param whitelist Whether the tab implements a whitelist or a blacklist.
+     * @param notify Whether this tab will play notification sounds.
      */
-    public void updatePattern(final String pattern, final boolean literal, final boolean whitelist) {
+    public void updatePattern(final String pattern, final boolean literal, final boolean whitelist,
+                              final boolean notify) {
         this.pattern = pattern;
         this.literal = literal;
         this.whitelist = whitelist;
+        this.notify = notify;
         filter = Pattern.compile(pattern, literal ? Pattern.LITERAL : 0).matcher("");
     }
 
@@ -77,6 +88,12 @@ public class ChatTab extends GuiNewChat {
     public void printChatMessageWithOptionalDeletion(final ITextComponent chatComponent, final int chatLineId) {
         super.printChatMessageWithOptionalDeletion(chatComponent, chatLineId);
         unread = true;
+        if (notify) {
+            final float before = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
+            Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, 1.0f);
+            Minecraft.getMinecraft().player.playSound(SoundEvents.BLOCK_NOTE_HARP, 1.0f, 1.0f);
+            Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, before);
+        }
     }
 
     /**
@@ -104,6 +121,7 @@ public class ChatTab extends GuiNewChat {
      * @return The export string.
      */
     public String getExport() {
-        return pattern + "§" + Boolean.toString(literal) + "§" + prefix + "§" + Boolean.toString(whitelist);
+        return pattern + "§" + Boolean.toString(literal) + "§" + prefix + "§" + Boolean.toString(whitelist)
+                + "§" + Boolean.toString(notify);
     }
 }
