@@ -3,6 +3,7 @@ package nge.lk.mods.simpletabs.tabs;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
 
@@ -89,7 +90,7 @@ public class ChatTab extends GuiNewChat {
         if (notify) {
             final float before = Minecraft.getMinecraft().gameSettings.getSoundLevel(SoundCategory.RECORDS);
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, 1.0f);
-            Minecraft.getMinecraft().player.playSound(SoundEvents.BLOCK_NOTE_CHIME, 1.0f, 1.0f);
+            Minecraft.getMinecraft().thePlayer.playSound("note.harp", 1.0f, 2.0f);
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, before);
         }
     }
