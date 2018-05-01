@@ -86,13 +86,11 @@ public class SimpleTabsMod {
 
     @SubscribeEvent
     public void onChat(final ClientChatEvent event) {
-        if (Minecraft.getMinecraft().currentScreen instanceof GuiChat) {
-            if (!event.getMessage().startsWith("/")) {
-                final String prefix = tabManager.getActivePrefix();
-                event.setMessage(prefix + event.getMessage());
-                if (event.getMessage().length() > 256) {
-                    event.setMessage(event.getMessage().substring(0, 256));
-                }
+        if (!event.getMessage().startsWith("/")) {
+            final String prefix = tabManager.getActivePrefix();
+            event.setMessage(prefix + event.getMessage());
+            if (event.getMessage().length() > 256) {
+                event.setMessage(event.getMessage().substring(0, 256));
             }
         }
     }
