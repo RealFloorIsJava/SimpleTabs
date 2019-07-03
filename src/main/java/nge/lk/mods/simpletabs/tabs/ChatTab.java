@@ -21,6 +21,11 @@ import java.util.regex.Pattern;
 public class ChatTab extends GuiNewChat {
 
     /**
+     * The magic value used to represent infinite history.
+     */
+    private static final int HISTORY_INFINITE = -1;
+
+    /**
      * The filter which selects the messages to accept.
      */
     private Matcher filter;
@@ -69,7 +74,7 @@ public class ChatTab extends GuiNewChat {
     public static int getHistorySize(final float val) {
         final float maxVal = 0.99666f;  // Produces cutoff at approx. 1 million.
         if (val >= maxVal) {
-            return -1;
+            return HISTORY_INFINITE;
         } else {
             return (int) Math.floor(Math.pow(100.0f, 3.0f * val));
         }
@@ -118,6 +123,41 @@ public class ChatTab extends GuiNewChat {
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, 1.0f);
             Minecraft.getMinecraft().player.playSound(SoundEvents.BLOCK_NOTE_CHIME, 1.0f, 1.0f);
             Minecraft.getMinecraft().gameSettings.setSoundLevel(SoundCategory.RECORDS, before);
+        }
+    }
+
+    @Override
+    protected void setChatLine(final ITextComponent chatComponent, final int chatLineId, final int updateCounter,
+                               final boolean displayOnly) {
+        if (chatLineId != 0) {
+            this.deleteChatLine(chatLineId);
+        }
+
+        final int maxLength = MathHelper.floor((float) getChatWidth() / getChatScale());
+        final List<ITextComponent> splitComponents = GuiUtilRenderComponents.splitText(chatComponent, maxLength,
+                Minecraft.getMinecraft().fontRenderer, false, false);
+        final boolean isChatOpen = getChatOpen();
+
+        for (final ITextComponent comp : splitComponents) {
+            if (isChatOpen && scrollPos > 0) {
+                isScrolled = true;
+                scroll(1);
+            }
+
+            drawnChatLines.add(0, new ChatLine(updateCounter, comp, chatLineId));
+        }
+
+        final int historySize = getHistorySize(history);
+        while (historySize != HISTORY_INFINITE && drawnChatLines.size() > historySize) {
+            drawnChatLines.remove(drawnChatLines.size() - 1);
+        }
+
+        if (!displayOnly) {
+            chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
+
+            while (historySize != HISTORY_INFINITE && chatLines.size() > historySize) {
+                chatLines.remove(chatLines.size() - 1);
+            }
         }
     }
 
