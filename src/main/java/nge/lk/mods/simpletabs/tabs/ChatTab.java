@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.gui.ChatLine;
 import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.MathHelper;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -123,29 +126,29 @@ public class ChatTab extends GuiNewChat {
     }
 
     @Override
-    protected void setChatLine(final ITextComponent chatComponent, final int chatLineId, final int updateCounter,
+    protected void setChatLine(final IChatComponent chatComponent, final int chatLineId, final int updateCounter,
                                final boolean displayOnly) {
         if (chatLineId != 0) {
             this.deleteChatLine(chatLineId);
         }
 
-        final int maxLength = MathHelper.floor((float) getChatWidth() / getChatScale());
-        final List<ITextComponent> splitComponents = GuiUtilRenderComponents.splitText(chatComponent, maxLength,
-                Minecraft.getMinecraft().fontRenderer, false, false);
+        final int maxLength = MathHelper.floor_float((float) getChatWidth() / getChatScale());
+        final List<IChatComponent> splitComponents = GuiUtilRenderComponents.func_178908_a(chatComponent, maxLength,
+                Minecraft.getMinecraft().fontRendererObj, false, false);
         final boolean isChatOpen = getChatOpen();
 
-        for (final ITextComponent comp : splitComponents) {
+        for (final IChatComponent comp : splitComponents) {
             if (isChatOpen && scrollPos > 0) {
                 isScrolled = true;
                 scroll(1);
             }
 
-            drawnChatLines.add(0, new ChatLine(updateCounter, comp, chatLineId));
+            field_146253_i.add(0, new ChatLine(updateCounter, comp, chatLineId));
         }
 
         final int historySize = getHistorySize(history);
-        while (historySize != HISTORY_INFINITE && drawnChatLines.size() > historySize) {
-            drawnChatLines.remove(drawnChatLines.size() - 1);
+        while (historySize != HISTORY_INFINITE && field_146253_i.size() > historySize) {
+            field_146253_i.remove(field_146253_i.size() - 1);
         }
 
         if (!displayOnly) {

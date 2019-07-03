@@ -122,7 +122,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         !((Boolean) expertModeButton.getMetadata()), ((Boolean) whitelistButton.getMetadata()),
                         ((Boolean) notifyButton.getMetadata()));
                 editingTab.setPrefix(prefixElement.getTextField().getText());
-                editingTab.setHistory(historySlider.getSlider().getSliderValue());
+                editingTab.setHistory(historySlider.getSlider().func_175220_c());
             } else {
                 // Create a new tab.
                 tabManager.createTab(
@@ -132,7 +132,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         ((Boolean) whitelistButton.getMetadata()),
                         prefixElement.getTextField().getText(),
                         ((Boolean) notifyButton.getMetadata()),
-                        historySlider.getSlider().getSliderValue()
+                        historySlider.getSlider().func_175220_c()
                 );
             }
             tabManager.saveState();
