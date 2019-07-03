@@ -53,7 +53,7 @@ public class TabIO {
      */
     public void saveState(final Iterable<Map<String, ChatTab>> tabs) {
         try {
-            FileUtil.writeLineStorage(4, saveFile, getExportIterator(tabs));
+            FileUtil.writeLineStorage(5, saveFile, getExportIterator(tabs));
         } catch (final IOException e) {
             DebugUtil.recoverableError(e);
         }
@@ -98,6 +98,12 @@ public class TabIO {
             if (newVersion == 3) { // Converter: v3 -> v4
                 // Change: Added notify flag.
                 newLine += "§false";
+                newVersion++;
+            }
+
+            if (newVersion == 4) { // Converter: v4 -> v5
+                // Change: Add history amount.
+                newLine += "§" + (1.0f / 3.0f);
                 // newVersion++; // Only need this when converting between more versions.
             }
 
@@ -135,8 +141,9 @@ public class TabIO {
             final String prefix = split[4];
             final boolean whitelist = Boolean.parseBoolean(split[5]);
             final boolean notify = Boolean.parseBoolean(split[6]);
+            final float history = Float.parseFloat(split[7]);
             results.get(results.size() - 1).put(tabName,
-                    new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, notify, prefix));
+                    new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, notify, prefix, history));
         }
     }
 }
