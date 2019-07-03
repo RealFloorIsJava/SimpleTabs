@@ -7,6 +7,7 @@ import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,28 +52,49 @@ public class ChatTab extends GuiNewChat {
     @Getter @Setter private String prefix;
 
     /**
+     * How much history is kept. Stored as the float representation to prevent precision loss.
+     */
+    @Getter @Setter private float history;
+
+    /**
+     * Obtains the history size from a [0.0, 1.0] float.
+     *
+     * @param val The float.
+     * @return The history size.
+     */
+    public static int getHistorySize(final float val) {
+        final float maxVal = 0.99666f;  // Produces cutoff at approx. 1 million.
+        if (val >= maxVal) {
+            return -1;
+        } else {
+            return (int) Math.floor(Math.pow(100.0f, 3.0f * val));
+        }
+    }
+
+    /**
      * Constructor.
      *
      * @param mc The minecraft reference.
      */
     public ChatTab(final Minecraft mc, final String pattern, final boolean literal, final boolean whitelist,
-                   final boolean notify, final String prefix) {
+                   final boolean notify, final String prefix, final float history) {
         super(mc);
         this.pattern = pattern;
         this.literal = literal;
         this.whitelist = whitelist;
         this.notify = notify;
         this.prefix = prefix;
+        this.history = history;
         filter = Pattern.compile(pattern, literal ? Pattern.LITERAL : 0).matcher("");
     }
 
     /**
      * Updates the filter pattern.
      *
-     * @param pattern The new pattern.
-     * @param literal Whether the pattern will be escaped.
+     * @param pattern   The new pattern.
+     * @param literal   Whether the pattern will be escaped.
      * @param whitelist Whether the tab implements a whitelist or a blacklist.
-     * @param notify Whether this tab will play notification sounds.
+     * @param notify    Whether this tab will play notification sounds.
      */
     public void updatePattern(final String pattern, final boolean literal, final boolean whitelist,
                               final boolean notify) {
@@ -99,7 +121,6 @@ public class ChatTab extends GuiNewChat {
      * Whether this tab accepts the given message for display.
      *
      * @param message The message.
-     *
      * @return Whether it is accepted.
      */
     public boolean acceptsMessage(final CharSequence message) {
@@ -120,7 +141,6 @@ public class ChatTab extends GuiNewChat {
      * @return The export string.
      */
     public String getExport() {
-        return pattern + "§" + Boolean.toString(literal) + "§" + prefix + "§" + Boolean.toString(whitelist)
-                + "§" + Boolean.toString(notify);
+        return pattern + "§" + literal + "§" + prefix + "§" + whitelist + "§" + notify + "§" + history;
     }
 }

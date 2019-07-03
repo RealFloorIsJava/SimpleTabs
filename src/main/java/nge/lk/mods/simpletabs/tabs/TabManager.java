@@ -80,7 +80,7 @@ public class TabManager {
      * Called when a chat message is received.
      *
      * @param chatComponent The chat message.
-     * @param chatLineId The chat line.
+     * @param chatLineId    The chat line.
      */
     public void printChatMessageWithOptionalDeletion(final IChatComponent chatComponent, final int chatLineId) {
         final String plainMessageWithColors = chatComponent.getUnformattedText();
@@ -110,22 +110,25 @@ public class TabManager {
     /**
      * Creates a new tab.
      *
-     * @param title The title of the tab.
-     * @param pattern The pattern the tab listens for.
-     * @param literal Whether the pattern is literal.
-     * @param prefix The prefix for sent chat messages.
+     * @param title     The title of the tab.
+     * @param pattern   The pattern the tab listens for.
+     * @param literal   Whether the pattern is literal.
+     * @param whitelist Whether or not this tab uses a whitelist.
+     * @param prefix    The prefix for sent chat messages.
+     * @param notify    Whether or not this tab notifies the user when a message is received.
+     * @param history   The number of lines of history the tab keeps. Using the float representation to prevent precision
+     *                  loss.
      */
     public void createTab(final String title, final String pattern, final boolean literal, final boolean whitelist,
-                          final String prefix, final boolean notify) {
+                          final String prefix, final boolean notify, final float history) {
         tabs.get(activeGroup).put(title, new ChatTab(Minecraft.getMinecraft(), pattern, literal, whitelist, notify,
-                prefix));
+                prefix, history));
     }
 
     /**
      * Returns whether the given tab exists.
      *
      * @param tab The tab's name.
-     *
      * @return Whether it exists.
      */
     public boolean doesTabExistInActiveGroup(final String tab) {
@@ -188,7 +191,6 @@ public class TabManager {
      * Checks whether the currently active tab has the given name.
      *
      * @param name The name.
-     *
      * @return Whether the name is the name of the currently active tab.
      */
     public boolean isTabActive(final String name) {
@@ -267,7 +269,7 @@ public class TabManager {
      */
     private void addDefaultTab() {
         tabs.get(activeGroup).put("General", new ChatTab(Minecraft.getMinecraft(), ".*", false,
-                true, false, ""));
+                true, false, "", 1.0f / 3.0f));
     }
 
     /**

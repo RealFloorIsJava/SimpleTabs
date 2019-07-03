@@ -5,6 +5,7 @@ import nge.lk.mods.commonlib.gui.factory.GuiFactory;
 import nge.lk.mods.commonlib.gui.factory.Positioning;
 import nge.lk.mods.commonlib.gui.factory.element.ButtonElement;
 import nge.lk.mods.commonlib.gui.factory.element.InputElement;
+import nge.lk.mods.commonlib.gui.factory.element.SliderElement;
 import nge.lk.mods.commonlib.gui.factory.element.TextElement;
 import nge.lk.mods.simpletabs.tabs.ChatTab;
 import nge.lk.mods.simpletabs.tabs.TabManager;
@@ -54,6 +55,11 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
     private InputElement prefixElement;
 
     /**
+     * The slider which determines how much history to keep.
+     */
+    private SliderElement historySlider;
+
+    /**
      * The button for enabling expert mode.
      */
     private ButtonElement expertModeButton;
@@ -92,9 +98,9 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
      * Constructor.
      *
      * @param parentScreen The parent screen.
-     * @param tabManager The tab manager owning the tabs.
-     * @param editingTab The currently edited tab, or {@code null}.
-     * @param titlePreset The preset for the title.
+     * @param tabManager   The tab manager owning the tabs.
+     * @param editingTab   The currently edited tab, or {@code null}.
+     * @param titlePreset  The preset for the title.
      */
     public GuiTabEditor(final GuiScreen parentScreen, final TabManager tabManager, final ChatTab editingTab,
                         final String titlePreset) {
@@ -116,6 +122,7 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         !((Boolean) expertModeButton.getMetadata()), ((Boolean) whitelistButton.getMetadata()),
                         ((Boolean) notifyButton.getMetadata()));
                 editingTab.setPrefix(prefixElement.getTextField().getText());
+                editingTab.setHistory(historySlider.getSlider().getSliderValue());
             } else {
                 // Create a new tab.
                 tabManager.createTab(
@@ -124,7 +131,8 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
                         !((Boolean) expertModeButton.getMetadata()),
                         ((Boolean) whitelistButton.getMetadata()),
                         prefixElement.getTextField().getText(),
-                        ((Boolean) notifyButton.getMetadata())
+                        ((Boolean) notifyButton.getMetadata()),
+                        historySlider.getSlider().getSliderValue()
                 );
             }
             tabManager.saveState();
@@ -218,10 +226,16 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
 
         addText(new Positioning().breakRow()).setText("Tab Prefix (for messages sent in this tab)",
                 0xA0A0A0);
-        prefixElement = addInput(new Positioning().relativeWidth(85).absoluteHeight(20).breakRow());
+        prefixElement = addInput(new Positioning().relativeWidth(40).absoluteHeight(20));
         prefixElement.getTextField().setMaxStringLength(255);
         prefixElement.getTextField().setText(editingTab != null ? editingTab.getPrefix() : "");
         prefixElement.getTextField().setCursorPositionZero();
+        addBlank(new Positioning().relativeWidth(4));
+
+        historySlider = addSlider(0.0f, 1.0f,
+                editingTab == null ? 1.0f / 3.0f : editingTab.getHistory(), this::getHistoryCaption,
+                (elem, val) -> {
+                }, new Positioning().relativeWidth(40).absoluteHeight(20).breakRow());
         addBlank(new Positioning().breakRow().absoluteHeight(10));
 
         addText(new Positioning().breakRow()).setText("You can delete tabs by middle clicking them",
@@ -273,5 +287,20 @@ public class GuiTabEditor extends GuiFactory implements Consumer<ButtonElement> 
             // Provide simple caption.
             patternCaption.setText("Tab Pattern (keyword for this tab)", 0xA0A0A0);
         }
+    }
+
+    /**
+     * Returns the history slider caption for the given value.
+     *
+     * @param element The element.
+     * @param value   The value.
+     * @return The slider caption.
+     */
+    private String getHistoryCaption(final SliderElement element, final float value) {
+        final int realVal = ChatTab.getHistorySize(value);
+        if (realVal < 0) {
+            return "History: Infinite";
+        }
+        return "History: " + realVal;
     }
 }
