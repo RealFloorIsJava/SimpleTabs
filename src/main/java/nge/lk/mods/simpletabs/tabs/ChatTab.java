@@ -133,9 +133,9 @@ public class ChatTab extends GuiNewChat {
             this.deleteChatLine(chatLineId);
         }
 
-        final int maxLength = MathHelper.floor((float) getChatWidth() / getChatScale());
+        final int maxLength = MathHelper.floor_float((float) getChatWidth() / getChatScale());
         final List<ITextComponent> splitComponents = GuiUtilRenderComponents.splitText(chatComponent, maxLength,
-                Minecraft.getMinecraft().fontRenderer, false, false);
+                Minecraft.getMinecraft().fontRendererObj, false, false);
         final boolean isChatOpen = getChatOpen();
 
         for (final ITextComponent comp : splitComponents) {
